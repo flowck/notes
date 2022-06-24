@@ -1,0 +1,46 @@
+version: '3'
+
+env:
+  ENV: test
+
+dotenv: ['.env', '{{.ENV}}/.env.', '{{.HOME}}/.env']
+
+tasks:
+  run:dev:
+    cmds:
+      - reflex -r '\.go' -s -- sh -c 'go run ./cmd/service'
+  build:
+    cmds:
+      - go build -o notes-service ./cmd/service
+
+  goose:
+    cmds:
+      - goose -dir ./sql create {{.CLI_ARGS}} sql
+
+  goose:down:
+    cmds:
+      - goose -dir ./sql down
+
+  goose:up:
+    cmds:
+      - goose -dir ./sql up
+
+  docker:build:
+    cmds:
+      - docker build . -t notes-service
+
+  docker:run:
+    cmds:
+      - docker run notes-service
+
+  docker:up:
+    cmds:
+      - docker-compose up -d
+
+  docker:down:
+    cmds:
+      - docker-compose down
+
+  sqlboiler:
+    cmds:
+      - sqlboiler psql
