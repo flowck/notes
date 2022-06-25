@@ -15,7 +15,7 @@ func runMigrations(DbDriver string) {
 
 	workdir, _ := os.Getwd()
 
-	err = goose.Up(DbConn, fmt.Sprintf("%s/sql", workdir))
+	err = goose.Up(DbConn, fmt.Sprintf("%s/infra/sql", workdir))
 
 	if err != nil {
 		panic(err)

@@ -1,14 +1,9 @@
-package repositories
+package folder
 
 import (
 	"context"
-	"notes/internal/infra"
+	"notes/infra"
 )
-
-type Folder struct {
-	Id   string
-	Name string
-}
 
 func FindFolders(ctx context.Context) ([]Folder, error) {
 	folders := make([]Folder, 0)

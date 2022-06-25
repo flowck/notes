@@ -7,8 +7,8 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httprate"
 	"net/http"
-	"notes/internal/infra"
-	"notes/internal/repositories"
+	"notes/infra"
+	"notes/modules/entry"
 	"strconv"
 	"time"
 )
@@ -32,16 +32,16 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(httprate.LimitByIP(int(infra.Cfg.MaxRequestsPerMinute), 1*time.Minute))
 
-	// entries, ok := repositories.FindEntries(ctx)
-	// folders, ok := repositories.FindFolders(ctx)
-	entry, ok := repositories.FindEntryById(ctx, "64086fd9-2eba-4e8d-972e-e79e10c74d42")
+	// entry, ok := repositories.FindEntries(ctx)
+	// folder, ok := repositories.FindFolders(ctx)
+	entry, ok := entry.FindEntryById(ctx, "64086fd9-2eba-4e8d-972e-e79e10c74d42")
 
 	if ok != nil {
 		panic(ok)
 	}
 
-	// fmt.Println(entries)
-	// fmt.Println(folders)
+	// fmt.Println(entry)
+	// fmt.Println(folder)
 	fmt.Println(entry)
 
 	fmt.Println("Server is running at port", infra.Cfg.Port)

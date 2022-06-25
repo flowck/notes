@@ -1,19 +1,10 @@
-package repositories
+package entry
 
 import (
 	"context"
 	"database/sql"
-	"notes/internal/infra"
-	"time"
+	"notes/infra"
 )
-
-type Entry struct {
-	Id        string
-	Content   string
-	UserId    string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-}
 
 func FindEntries(ctx context.Context) ([]Entry, error) {
 	entries := make([]Entry, 0)
@@ -62,7 +53,7 @@ func FindEntryById(ctx context.Context, id string) (*Entry, error) {
 
 func UpdateEntry(ctx context.Context, id string, content string) error {
 
-	_, err := infra.DbConn.ExecContext(ctx, `UPDATE entries SET content = $1 WHERE id = $2`, content, id)
+	_, err := infra.DbConn.ExecContext(ctx, `UPDATE entry SET content = $1 WHERE id = $2`, content, id)
 
 	if err != nil {
 		return err
@@ -83,7 +74,7 @@ func DeleteEntry(ctx context.Context, id string) error {
 
 func InsertEntry(ctx context.Context, content string, userId string) error {
 
-	_, err := infra.DbConn.ExecContext(ctx, `INSERT INTO entries (content, user_id) VALUES($1, $2);`, content, userId)
+	_, err := infra.DbConn.ExecContext(ctx, `INSERT INTO entry (content, user_id) VALUES($1, $2);`, content, userId)
 
 	if err != nil {
 		return err
