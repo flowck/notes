@@ -3,10 +3,14 @@ package main
 import (
 	"github.com/go-chi/chi/v5"
 	"notes/modules/entry"
+	"notes/modules/user"
 )
 
 func RegisterRoutes(router chi.Router) {
 	// Users
+	router.Route("/auth", func(r chi.Router) {
+		r.Post("/signup", user.Signup)
+	})
 
 	// Entries
 	router.Route("/entries", func(r chi.Router) {
