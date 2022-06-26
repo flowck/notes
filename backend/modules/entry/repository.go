@@ -10,7 +10,11 @@ import (
 func findEntries(ctx context.Context, userId string) ([]Entry, error) {
 	entries := make([]Entry, 0)
 
-	rows, err := infra.DbConn.QueryContext(ctx, `SELECT id, content, user_id, created_at, updated_at FROM entries WHERE user_id = $1`, userId)
+	rows, err := infra.DbConn.QueryContext(ctx, `
+		SELECT id, content, user_id, created_at, updated_at
+		FROM entries
+		WHERE user_id = $1
+	`, userId)
 
 	if err != nil {
 		return nil, err
