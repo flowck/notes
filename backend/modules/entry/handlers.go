@@ -29,6 +29,26 @@ func GetEntries(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
+func GetEntry(w http.ResponseWriter, r *http.Request) {
+	entryId := chi.URLParam(r, "entryId")
+	entry, err := findEntryById(r.Context(), entryId, UserId)
+
+	if err != nil {
+		fmt.Errorf("Unable to query entry %w", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	res, err := json.Marshal(entry)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(res)
+}
+
 func CreateEntry(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 

@@ -38,8 +38,12 @@ func findEntries(ctx context.Context, userId string) ([]Entry, error) {
 func findEntryById(ctx context.Context, id string, userId string) (*Entry, error) {
 	entry := &Entry{}
 
-	row := infra.DbConn.QueryRowContext(ctx, `SELECT id, content, created_at, updated_at FROM entries WHERE id = $1 AND user_id = $2`, id, userId)
-	err := row.Scan(&entry.Id, &entry.Content, &entry.CreatedAt, &entry.UpdatedAt)
+	row := infra.DbConn.QueryRowContext(ctx, `
+		SELECT id, content, user_id, created_at, updated_at
+		FROM entries
+		WHERE id = $1 AND user_id = $2
+	`, id, userId)
+	err := row.Scan(&entry.Id, &entry.Content, &entry.UserId, &entry.CreatedAt, &entry.UpdatedAt)
 
 	if err == sql.ErrNoRows {
 		return nil, nil

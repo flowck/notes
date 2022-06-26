@@ -13,6 +13,7 @@ func RegisterRoutes(router chi.Router) {
 		r.Get("/", entry.GetEntries)
 		r.Post("/", entry.CreateEntry)
 		r.Put("/{entryId}", entry.UpdateEntry)
+		r.Get("/{entryId}", entry.GetEntry)
 	})
 
 	// Folders
