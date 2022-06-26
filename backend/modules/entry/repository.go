@@ -6,10 +6,10 @@ import (
 	"notes/infra"
 )
 
-func FindEntries(ctx context.Context) ([]Entry, error) {
+func findEntries(ctx context.Context, userId string) ([]Entry, error) {
 	entries := make([]Entry, 0)
 
-	rows, err := infra.DbConn.QueryContext(ctx, `SELECT id, content, user_id, created_at, updated_at FROM entries`)
+	rows, err := infra.DbConn.QueryContext(ctx, `SELECT id, content, created_at, updated_at FROM entries WHERE user_id = $1`, userId)
 
 	if err != nil {
 		return nil, err
@@ -23,7 +23,6 @@ func FindEntries(ctx context.Context) ([]Entry, error) {
 		rows.Scan(
 			&entry.Id,
 			&entry.Content,
-			&entry.UserId,
 			&entry.CreatedAt,
 			&entry.UpdatedAt,
 		)
@@ -34,11 +33,11 @@ func FindEntries(ctx context.Context) ([]Entry, error) {
 	return entries, nil
 }
 
-func FindEntryById(ctx context.Context, id string) (*Entry, error) {
+func findEntryById(ctx context.Context, id string, userId string) (*Entry, error) {
 	entry := &Entry{}
 
-	row := infra.DbConn.QueryRowContext(ctx, `SELECT id, content, user_id, created_at, updated_at FROM entries WHERE id = $1`, id)
-	err := row.Scan(&entry.Id, &entry.Content, &entry.UserId, &entry.CreatedAt, &entry.UpdatedAt)
+	row := infra.DbConn.QueryRowContext(ctx, `SELECT id, content, created_at, updated_at FROM entries WHERE id = $1 AND user_id = $2`, id, userId)
+	err := row.Scan(&entry.Id, &entry.Content, &entry.CreatedAt, &entry.UpdatedAt)
 
 	if err == sql.ErrNoRows {
 		return nil, nil
@@ -51,7 +50,7 @@ func FindEntryById(ctx context.Context, id string) (*Entry, error) {
 	return entry, nil
 }
 
-func UpdateEntry(ctx context.Context, id string, content string) error {
+func updateEntry(ctx context.Context, id string, content string) error {
 
 	_, err := infra.DbConn.ExecContext(ctx, `UPDATE entry SET content = $1 WHERE id = $2`, content, id)
 
@@ -62,7 +61,7 @@ func UpdateEntry(ctx context.Context, id string, content string) error {
 	return nil
 }
 
-func DeleteEntry(ctx context.Context, id string) error {
+func deleteEntry(ctx context.Context, id string) error {
 	_, err := infra.DbConn.ExecContext(ctx, `DELETE FROM entries WHERE id = $1`, id)
 
 	if err != nil {
@@ -72,7 +71,7 @@ func DeleteEntry(ctx context.Context, id string) error {
 	return nil
 }
 
-func InsertEntry(ctx context.Context, content string, userId string) error {
+func insertEntry(ctx context.Context, content string, userId string) error {
 
 	_, err := infra.DbConn.ExecContext(ctx, `INSERT INTO entry (content, user_id) VALUES($1, $2);`, content, userId)
 

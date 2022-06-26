@@ -1,14 +1,12 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httprate"
 	"net/http"
 	"notes/infra"
-	"notes/modules/entry"
 	"strconv"
 	"time"
 )
@@ -24,7 +22,6 @@ func GlobalMiddleware(handler http.Handler) http.Handler {
 
 func main() {
 	r := chi.NewRouter()
-	ctx, _ := context.WithCancel(context.Background())
 
 	infra.InitDatabase(infra.Cfg)
 
@@ -32,17 +29,7 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(httprate.LimitByIP(int(infra.Cfg.MaxRequestsPerMinute), 1*time.Minute))
 
-	// entry, ok := repositories.FindEntries(ctx)
-	// folder, ok := repositories.FindFolders(ctx)
-	entry, ok := entry.FindEntryById(ctx, "64086fd9-2eba-4e8d-972e-e79e10c74d42")
-
-	if ok != nil {
-		panic(ok)
-	}
-
-	// fmt.Println(entry)
-	// fmt.Println(folder)
-	fmt.Println(entry)
+	RegisterRoutes(r)
 
 	fmt.Println("Server is running at port", infra.Cfg.Port)
 	err := http.ListenAndServe(fmt.Sprintf(":%s", strconv.Itoa(int(infra.Cfg.Port))), r)
