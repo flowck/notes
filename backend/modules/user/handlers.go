@@ -114,7 +114,7 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 
 	// defaultClaims :=
 
-	/*claims := UserClaims{
+	claims := UserClaims{
 		user.FirstName,
 		user.LastName,
 		user.Email,
@@ -127,11 +127,6 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 			NotBefore: jwt.NewNumericDate(time.Now()),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * 5 * time.Hour)),
 		},
-	}*/
-
-	claims := &jwt.RegisteredClaims{
-		ExpiresAt: jwt.NewNumericDate(time.Unix(1516239022, 0)),
-		Issuer:    "test",
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -145,7 +140,9 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("Token", ss)
 
-	res, _ := json.Marshal(struct{ token string }{token: ss})
+	res, _ := json.Marshal(struct {
+		Token string `json:"token"`
+	}{Token: ss})
 
 	w.Write(res)
 }
