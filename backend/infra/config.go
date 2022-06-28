@@ -12,6 +12,7 @@ type Config struct {
 	Port                 int16  `envconfig:"PORT"`
 	MaxRequestsPerMinute int16  `envconfig:"MAX_REQUESTS_PER_MINUTE"`
 	Environment          string `envconfig:"ENVIRONMENT"`
+	JwtSigningKey        string `envconfig:"JWT_SIGNING_KEY"`
 }
 
 var Cfg *Config

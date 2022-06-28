@@ -10,6 +10,7 @@ func RegisterRoutes(router chi.Router) {
 	// Users
 	router.Route("/auth", func(r chi.Router) {
 		r.Post("/signup", user.Signup)
+		r.Post("/signin", user.SignIn)
 	})
 
 	// Entries

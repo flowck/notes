@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"notes/infra"
 )
@@ -13,9 +14,12 @@ func findUserByEmail(ctx context.Context, email string) (*User, error) {
 		FROM users
 		WHERE email = $1
 	`, email)
+
 	err := row.Scan(&user.Id, &user.FirstName, &user.LastName)
 
-	if err != nil {
+	if err == sql.ErrNoRows {
+		return nil, nil
+	} else if err != nil {
 		log.Printf("Unable to query user: %s", err)
 		return nil, err
 	}

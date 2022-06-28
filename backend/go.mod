@@ -12,4 +12,7 @@ require (
 	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
 )
 
-require github.com/cespare/xxhash/v2 v2.1.2 // indirect
+require (
+	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
+)
