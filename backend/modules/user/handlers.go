@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-type UserSignupDto struct {
+type SignupDto struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
@@ -26,7 +26,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user UserSignupDto
+	var user SignupDto
 	ctx := r.Context()
 
 	err = json.Unmarshal(payload, &user)
@@ -65,12 +65,12 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-type UserSignInDto struct {
+type SignInDto struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-type UserClaims struct {
+type CustomClaims struct {
 	Email     string `json:"email"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
@@ -86,7 +86,7 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var userAuthData UserSignInDto
+	var userAuthData SignInDto
 
 	err = json.Unmarshal(payload, &userAuthData)
 
@@ -109,12 +109,20 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Compare password
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userAuthData.Password))
+
+	if err != nil {
+		infra.SendResponse(w, "User's password do not match.", http.StatusUnauthorized)
+		return
+	}
+
 	// TODO
 	// Generate JWT token
 
 	// defaultClaims :=
 
-	claims := UserClaims{
+	claims := CustomClaims{
 		user.FirstName,
 		user.LastName,
 		user.Email,
