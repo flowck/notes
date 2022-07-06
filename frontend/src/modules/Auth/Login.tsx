@@ -37,7 +37,7 @@ export function Login() {
         .post<LoginSuccess>("/auth/signin", formData)
         .then(({ data }) => {
           window.localStorage.setItem("notes_user_token", data.token);
-          navigate("/dashboard");
+          navigate("/app/my");
         })
         .catch((err) => {
           setError(handleApiErrors(err));
