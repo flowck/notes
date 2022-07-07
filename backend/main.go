@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"net/http"
 	"notes/infra"
+	"notes/internal/common"
+	entryHttpPort "notes/internal/entry/port/http"
+	userHttpPort "notes/internal/user/port/http"
 	"strconv"
 	"time"
 
@@ -33,13 +36,14 @@ func GlobalMiddleware(handler http.Handler) http.Handler {
 func main() {
 	r := chi.NewRouter()
 
-	infra.InitDatabase(infra.Cfg)
+	common.InitDatabase(infra.Cfg)
 
 	r.Use(GlobalMiddleware)
 	r.Use(middleware.Logger)
 	r.Use(httprate.LimitByIP(int(infra.Cfg.MaxRequestsPerMinute), 1*time.Minute))
 
-	RegisterRoutes(r)
+	entryHttpPort.InitEntryHttpRoutes(r, common.DbConn)
+	userHttpPort.InitUserHttpRoutes(r, common.DbConn)
 
 	fmt.Println("Server is running at port", infra.Cfg.Port)
 	err := http.ListenAndServe(fmt.Sprintf(":%s", strconv.Itoa(int(infra.Cfg.Port))), r)

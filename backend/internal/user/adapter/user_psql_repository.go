@@ -1,15 +1,27 @@
-package user
+package adapter
 
 import (
 	"context"
 	"database/sql"
 	"log"
-	"notes/infra"
+	"notes/internal/user/domain"
 )
 
-func findUserByEmail(ctx context.Context, email string) (*User, error) {
-	user := &User{}
-	row := infra.DbConn.QueryRowContext(ctx, `
+type UserPsqlRepository struct {
+	client *sql.DB
+}
+
+func NewUserPsqlRepository(client *sql.DB) UserPsqlRepository {
+	if client == nil {
+		panic("Database client is missing")
+	}
+
+	return UserPsqlRepository{client}
+}
+
+func (r UserPsqlRepository) FindUserByEmail(ctx context.Context, email string) (*domain.User, error) {
+	user := &domain.User{}
+	row := r.client.QueryRowContext(ctx, `
 		SELECT id, COALESCE(first_name, '') as first_name, COALESCE(last_name, '') as last_name, password
 		FROM users
 		WHERE email = $1
@@ -26,9 +38,8 @@ func findUserByEmail(ctx context.Context, email string) (*User, error) {
 
 	return user, nil
 }
-
-func insertUser(ctx context.Context, email string, password string) error {
-	_, err := infra.DbConn.ExecContext(ctx, `
+func (r UserPsqlRepository) InsertUser(ctx context.Context, email string, password string) error {
+	_, err := r.client.ExecContext(ctx, `
 		INSERT INTO users (email, password)
 		VALUES ($1, $2)
 	`, email, password)

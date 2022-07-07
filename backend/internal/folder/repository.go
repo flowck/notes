@@ -2,13 +2,13 @@ package folder
 
 import (
 	"context"
-	"notes/infra"
+	"notes/internal/common"
 )
 
 func FindFolders(ctx context.Context) ([]Folder, error) {
 	folders := make([]Folder, 0)
 
-	rows, err := infra.DbConn.QueryContext(ctx, `SELECT id, name FROM folders`)
+	rows, err := common.DbConn.QueryContext(ctx, `SELECT id, name FROM folders`)
 
 	if err != nil {
 		return nil, err

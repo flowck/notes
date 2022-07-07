@@ -11,19 +11,19 @@ tasks:
       - reflex -r '\.go' -s -- sh -c 'go run ./'
   build:
     cmds:
-      - go build -o notes-service ./cmd/service
+      - go build -o notes-service .
 
   goose:
     cmds:
-      - goose -dir ./infra/sql create {{.CLI_ARGS}} sql
+      - goose -dir ./sql create {{.CLI_ARGS}} sql
 
   goose:down:
     cmds:
-      - goose -dir ./infra/sql down
+      - goose -dir ./sql down
 
   goose:up:
     cmds:
-      - goose -dir ./infra/sql up
+      - goose -dir ./sql up
 
   docker:build:
     cmds:

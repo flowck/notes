@@ -1,4 +1,4 @@
-package infra
+package common
 
 import (
 	"encoding/json"
@@ -36,6 +36,19 @@ func SendResponse(w http.ResponseWriter, msg string, status int) error {
 
 	if ok != nil {
 		return ok
+	}
+
+	w.WriteHeader(status)
+	w.Write(res)
+
+	return nil
+}
+
+func WriteJSON(w http.ResponseWriter, data any, status int) error {
+	res, err := json.Marshal(data)
+
+	if err != nil {
+		panic(err)
 	}
 
 	w.WriteHeader(status)

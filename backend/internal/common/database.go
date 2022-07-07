@@ -1,10 +1,11 @@
-package infra
+package common
 
 import (
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
 	"github.com/pressly/goose/v3"
+	"notes/infra"
 	"os"
 )
 
@@ -15,14 +16,14 @@ func runMigrations(DbDriver string) {
 
 	workdir, _ := os.Getwd()
 
-	err = goose.Up(DbConn, fmt.Sprintf("%s/infra/sql", workdir))
+	err = goose.Up(DbConn, fmt.Sprintf("%s/sql", workdir))
 
 	if err != nil {
 		panic(err)
 	}
 }
 
-func InitDatabase(cfg *Config) {
+func InitDatabase(cfg *infra.Config) {
 	var err error
 	DbConn, err = sql.Open(cfg.DbDriver, cfg.DbUrl)
 
@@ -30,7 +31,7 @@ func InitDatabase(cfg *Config) {
 		panic(err)
 	}
 
-	runMigrations(Cfg.DbDriver)
+	runMigrations(infra.Cfg.DbDriver)
 
 	fmt.Println("Connected to the repositories")
 }
