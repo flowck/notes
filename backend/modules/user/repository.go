@@ -10,12 +10,12 @@ import (
 func findUserByEmail(ctx context.Context, email string) (*User, error) {
 	user := &User{}
 	row := infra.DbConn.QueryRowContext(ctx, `
-		SELECT id, COALESCE(first_name, '') as first_name, COALESCE(last_name, '') as last_name
+		SELECT id, COALESCE(first_name, '') as first_name, COALESCE(last_name, '') as last_name, password
 		FROM users
 		WHERE email = $1
 	`, email)
 
-	err := row.Scan(&user.Id, &user.FirstName, &user.LastName)
+	err := row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Password)
 
 	if err == sql.ErrNoRows {
 		return nil, nil
