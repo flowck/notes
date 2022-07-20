@@ -4,6 +4,6 @@ WORKDIR /usr/app
 
 COPY . .
 
-RUN go build -o notes-service ./cmd/service
+RUN go build -o service ./cmd/service
 
-CMD ./user-auth
+CMD ./service
